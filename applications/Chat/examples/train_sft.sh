@@ -1,10 +1,10 @@
-torchrun --standalone --nproc_per_node=4 train_sft.py \
+torchrun --standalone --nproc_per_node=4 examples/train_sft.py \
     --pretrain "/path/to/LLaMa-7B/" \
     --model 'llama' \
-    --strategy colossalai_zero2 \
+    --strategy naive \
     --log_interval 10 \
-    --save_path  /path/to/Coati-7B \
-    --dataset /path/to/data.json \
+    --save_path  "models/sft" \
+    --dataset "yizhongw/self_instruct" \
     --batch_size 4 \
     --accimulation_steps 8 \
     --lr 2e-5 \

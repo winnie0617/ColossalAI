@@ -1,12 +1,13 @@
-torchrun --standalone --nproc_per_node=4 examples/train_sft.py \
-    --pretrain "/path/to/LLaMa-7B/" \
+torchrun --standalone --nproc_per_node=1 examples/train_sft.py \
+    --pretrain "decapoda-research/llama-7b-hf" \
     --model 'llama' \
     --strategy naive \
     --log_interval 10 \
     --save_path  "models/sft" \
     --dataset "yizhongw/self_instruct" \
-    --batch_size 4 \
+    --batch_size 1 \
     --accimulation_steps 8 \
     --lr 2e-5 \
     --max_datasets_size 512 \
     --max_epochs 1 \
+    --lora_rank 16 \

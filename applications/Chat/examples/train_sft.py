@@ -17,7 +17,7 @@ from datasets import load_dataset
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-from transformers import AutoTokenizer, BloomTokenizerFast
+from transformers import AutoTokenizer, BloomTokenizerFast, LlamaTokenizer
 from transformers.models.gpt2.tokenization_gpt2 import GPT2Tokenizer
 
 from colossalai.logging import get_dist_logger
@@ -64,7 +64,7 @@ def train(args):
     elif args.model == 'opt':
         tokenizer = AutoTokenizer.from_pretrained("facebook/opt-350m")
     elif args.model == 'llama':
-        tokenizer = AutoTokenizer.from_pretrained(
+        tokenizer = LlamaTokenizer.from_pretrained(
             args.pretrain,
             padding_side="right",
             use_fast=False,
@@ -97,6 +97,7 @@ def train(args):
 
     logger = get_dist_logger()
 
+    print("configure dataset")
     # configure dataset
     if args.dataset == 'yizhongw/self_instruct':
         train_data = load_dataset(args.dataset, 'super_natural_instructions', split='train')
@@ -111,7 +112,7 @@ def train(args):
                                           max_datasets_size=args.max_datasets_size,
                                           max_length=max_len)
         eval_dataset = None
-        data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
+    data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
 
     if dist.is_initialized() and dist.get_world_size() > 1:
         train_sampler = DistributedSampler(train_dataset,
